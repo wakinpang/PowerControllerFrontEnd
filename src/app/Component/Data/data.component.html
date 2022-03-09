@@ -1,0 +1,277 @@
+<mat-card>
+  <div class="row container-fluid">
+    <form class="form-inline">
+      <div class="form-group">
+        <label for="device" class="control-label">设备</label>
+        <input type="text" class="form-control" id="device" placeholder="设备编号" name="device" [(ngModel)]="device">
+      </div>
+      <div class="form-group">
+        <label for="date" class="control-label">查询日期</label>
+        <input type="text" class="form-control" id="date" bsDaterangepicker placeholder="选择日期" name="date" [(ngModel)]="dateRange">
+      </div>
+      <button type="button" class="btn btn-default" (click)="onSearch();">查询</button>
+      <button type="button" class="btn btn-primary" (click)="onOutput();">导出</button>
+    </form>
+  </div>
+</mat-card>
+<mat-card style="margin-top:15px;">
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th class="col-md-1">#</th>
+          <th class="col-md-1">设备</th>
+          <th class="col-md-1">煤 a</th>
+          <th class="col-md-1">油 b</th>
+          <th class="col-md-1">电 c</th>
+          <th class="col-md-1">蒸汽 d</th>
+          <th class="col-md-1">热力 e</th>
+          <th class="col-md-1">天然气 f</th>
+          <th class="col-md-1">自来水 g</th>
+          <th class="col-md-1">时间</th>
+          <th class="col-md-2">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of page">
+          <td>
+            <input type="checkbox" [(ngModel)]="isDerive[days.indexOf(data)]">
+          </td>
+          <td>{{data.device}}</td>
+          <td>{{data.values[data.values.length - 1].coal}}</td>
+          <td>{{data.values[data.values.length - 1].oil}}</td>
+          <td>{{data.values[data.values.length - 1].electric}}</td>
+          <td>{{data.values[data.values.length - 1].steam}}</td>
+          <td>{{data.values[data.values.length - 1].heat}}</td>
+          <td>{{data.values[data.values.length - 1].gas}}</td>
+          <td>{{data.values[data.values.length - 1].water}}</td>
+          <td>{{data.date + ' ' + data.values[data.values.length - 1].createdAt}}</td>
+          <td>
+            <a href="javascript:void(0);" class="text-muted" (click)="openModal(detTemplate, data);">查看</a>
+            <a href="javascript:void(0);" class="text-danger" (click)="openModal(delTemplate, data);">删除</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!list || list.length === 0" class="container-fluid">
+        <label>没有数据</label>
+    </div>
+  </div>
+
+  <div class="col-xs-12 col-sm-12 text-center">
+    <pagination [totalItems]="TotalItems" [(ngModel)]="CurrentPage" [maxSize]="MaxSize" [itemsPerPage]="PerPage" class="pagination-sm"
+      [boundaryLinks]="true" [rotate]="false" nextText="下一页" previousText="上一页" firstText="首页" lastText="尾页" (pageChanged)="CurrentPage = $event.page; onPageChanged()">
+    </pagination>
+  </div>
+</mat-card>
+
+<mat-card style="margin-top: 40px">
+  <h4 class="text-info">符号:+相加 -相减 *乘以 /除以 例:a*b+c-d/f</h4>
+  <div class="container-fluid row">
+    <form class="form-inline">
+      <div class="form-group formula">
+        <input type="text" [(ngModel)]="formula" class="form-control" placeholder="公式" name="formula">
+        <button type="button" class="btn btn-success btn-formula" (click)="loadChart();">运行公式</button>
+      </div>
+    </form>
+    <strong *ngIf="formulaErrorMsg != ''" style="color: red">{{formulaErrorMsg}}</strong>
+  </div>
+</mat-card>
+
+<mat-card style="margin-top:15px;">
+  <form class="form-inline container-fluid">
+    <div class="form-group">
+      <label for="chart">图表</label>
+      <select class="form-control" name="chart" id="chart" [(ngModel)]="chartType">
+        <option value="line">折线图</option>
+        <option value="bar">柱状图</option>
+        <option value="pie">饼图</option>
+      </select>
+      <label for="unit">单位</label>
+      <select class="form-control" name="unit" id="unit" (change)="unitChanged();" [(ngModel)]="unitType">
+        <option value="标准煤">标准煤</option>
+        <option value="CO2">CO2</option>
+      </select>
+      <label>时间跨度</label>
+      <input type="number" [(ngModel)]="timeVal" name="val" style="width:50px">
+      <select class="form-control" [(ngModel)]="timeType" name="range">
+        <option value="日">日</option>
+        <option value="月">月</option>
+        <option value="年">年</option>
+        <option value="时">时</option>
+        <option value="分">分</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="checkbox-inline">
+        <input type="checkbox" [(ngModel)]="types[0]" [disabled]="disabled[0]" name="coal">煤
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" [(ngModel)]="types[1]" [disabled]="disabled[1]" name="petrol">油
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" [(ngModel)]="types[2]" [disabled]="disabled[2]" name="electric">电
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" [(ngModel)]="types[3]" [disabled]="disabled[3]" name="steam">蒸汽
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" [(ngModel)]="types[4]" [disabled]="disabled[4]" name="heat">热力
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" [(ngModel)]="types[5]" [disabled]="disabled[5]" name="gas">天然气
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" [(ngModel)]="types[6]" [disabled]="disabled[6]" name="water">自来水
+      </label>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="loadChart();">运行</button>
+  </form>
+  <div echarts [options]="CustomChart" class="chart"></div>
+</mat-card>
+
+
+<ng-template #detTemplate>
+  <div class="modal-header">
+    <div class="form-group row">
+      <label>
+        <h4>详细信息</h4>
+      </label>
+      <button type="button" class="btn btn-success" (click)="onNew();">增加</button>
+    </div>
+  </div>
+  <div class="modal-body">
+    <table class="table-condensed">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>煤</th>
+          <th>油</th>
+          <th>电</th>
+          <th>蒸汽</th>
+          <th>热力</th>
+          <th>天然气</th>
+          <th>自来水</th>
+          <th>时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="isCreating">
+          <td></td>
+          <td>
+            <input type="text" style="width:50px" [(ngModel)]="newData.coal">
+          </td>
+          <td>
+            <input type="text" style="width:50px" [(ngModel)]="newData.oil">
+          </td>
+          <td>
+            <input type="text" style="width:50px" [(ngModel)]="newData.electric">
+          </td>
+          <td>
+            <input type="text" style="width:50px" [(ngModel)]="newData.steam">
+          </td>
+          <td>
+            <input type="text" style="width:50px" [(ngModel)]="newData.heat">
+          </td>
+          <td>
+            <input type="text" style="width:50px" [(ngModel)]="newData.gas">
+          </td>
+          <td>
+            <input type="text" style="width:50px" [(ngModel)]="newData.water">
+          </td>
+          <td>
+            <input type="text" style="width:50px" [(ngModel)]="newData.createdAt">
+          </td>
+
+          <td>
+            <button type="button" class="btn btn-success" (click)="verifyNew()">确定</button>
+            <button type="button" class="btn btn-default" (click)="isCreating = false;">取消</button>
+          </td>
+        </tr>
+        <tr *ngFor="let id of ids">
+          <td></td>
+          <td *ngIf="!modifying[id]">{{nowData.values[id].coal}}</td>
+          <td *ngIf="!modifying[id]">{{nowData.values[id].oil}}</td>
+          <td *ngIf="!modifying[id]">{{nowData.values[id].electric}}</td>
+          <td *ngIf="!modifying[id]">{{nowData.values[id].steam}}</td>
+          <td *ngIf="!modifying[id]">{{nowData.values[id].heat}}</td>
+          <td *ngIf="!modifying[id]">{{nowData.values[id].gas}}</td>
+          <td *ngIf="!modifying[id]">{{nowData.values[id].water}}</td>
+
+          <td *ngIf="modifying[id]">
+            <input type="text" style="width:50px" [(ngModel)]="nowData.values[id].coal">
+          </td>
+          <td *ngIf="modifying[id]">
+            <input type="text" style="width:50px" [(ngModel)]="nowData.values[id].oil">
+          </td>
+          <td *ngIf="modifying[id]">
+            <input type="text" style="width:50px" [(ngModel)]="nowData.values[id].electric">
+          </td>
+          <td *ngIf="modifying[id]">
+            <input type="text" style="width:50px" [(ngModel)]="nowData.values[id].steam">
+          </td>
+          <td *ngIf="modifying[id]">
+            <input type="text" style="width:50px" [(ngModel)]="nowData.values[id].heat">
+          </td>
+          <td *ngIf="modifying[id]">
+            <input type="text" style="width:50px" [(ngModel)]="nowData.values[id].gas">
+          </td>
+          <td *ngIf="modifying[id]">
+            <input type="text" style="width:50px" [(ngModel)]="nowData.values[id].water">
+          </td>
+          <td>{{nowData.values[id].createdAt}}</td>
+
+          <td *ngIf="!modifying[id]">
+            <button type="button" class="btn btn-primary" (click)="modifying[id] = true;">修改</button>
+          </td>
+          <td *ngIf="modifying[id]">
+            <button type="button" class="btn btn-success" (click)="verifyClick(id);">确定</button>
+            <button type="button" class="btn btn-default" (click)="cancelClick(id);">取消</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="text-right">
+      <button class="btn btn-primary" type="button" (click)="modalRef.hide();">确认</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #delTemplate>
+  <div class="modal-body">
+    <table class="table-condensed">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>煤</th>
+          <th>油</th>
+          <th>电</th>
+          <th>蒸汽</th>
+          <th>热力</th>
+          <th>天然气</th>
+          <th>自来水</th>
+          <th>时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let id of ids">
+          <td>
+            <input type="checkbox" [(ngModel)]="isDelete[id]">
+          </td>
+          <td>{{nowData.values[id].coal}}</td>
+          <td>{{nowData.values[id].oil}}</td>
+          <td>{{nowData.values[id].electric}}</td>
+          <td>{{nowData.values[id].steam}}</td>
+          <td>{{nowData.values[id].heat}}</td>
+          <td>{{nowData.values[id].gas}}</td>
+          <td>{{nowData.values[id].water}}</td>
+          <td>{{nowData.values[id].createdAt}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer text-right">
+    <button class="btn btn-danger" type="button" (click)="delete();">删除选中</button>
+    <button class="btn btn-default" type="button" (click)="modalRef.hide();">取消</button>
+  </div>
+</ng-template>

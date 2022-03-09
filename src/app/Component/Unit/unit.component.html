@@ -1,0 +1,94 @@
+<div class="alert alert-success alert-dismissible" role="alert" [hidden]="successMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onSuccessClick()"><span
+    aria-hidden="true">&times;</span></button>
+  <strong>成功!</strong> {{successMsg}}
+</div>
+
+<div class="alert alert-warning alert-dismissible" role="alert" [hidden]="warningMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onWarningClick()"><span
+    aria-hidden="true">&times;</span></button>
+  <strong>错误!</strong> {{warningMsg}}
+</div>
+
+<mat-card>
+  <form>
+    <button type="button" class="btn btn-success" (click)="onNew(modTemplate)">增加</button>
+  </form>
+</mat-card>
+<mat-card style="margin-top:15px;">
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th class="col-md-2">#</th>
+        <th class="col-md-2">分类</th>
+        <th class="col-md-4">名称</th>
+        <th class="col-md-2">符号</th>
+        <th class="col-md-2">操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let unit of Items; let i = index;">
+        <td>{{(CurrentPage - 1) * PerPage + i + 1}}</td>
+        <td>{{unit.type}}</td>
+        <td>{{unit.name}}</td>
+        <td>{{unit.unit}}</td>
+        <td>
+          <a href="javascript:void(0);" class="text-primary" (click)="onModify(modTemplate,unit);">修改</a>
+          <a href="javascript:void(0);" class="text-danger" (click)="openModal(delTemplate,unit);">删除</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-xs-12 col-sm-12 text-center">
+    <pagination [totalItems]="TotalItems" [(ngModel)]="CurrentPage" [maxSize]="MaxSize" [itemsPerPage]="PerPage"
+                class="pagination-sm"
+                [boundaryLinks]="true" [rotate]="false" nextText="下一页" previousText="上一页" firstText="首页" lastText="尾页"
+                (pageChanged)="onPageChanged($event)"></pagination>
+  </div>
+</mat-card>
+
+<ng-template #modTemplate>
+  <div class="modal-header">
+    <h4>{{isModify?'修改':'新增'}}单位</h4>
+  </div>
+  <div class="modal-body">
+    <form role="form" class="form-horizontal">
+      <div class="form-group">
+        <label for="type" class="col-sm-2 control-label">分类</label>
+        <div class="col-sm-10">
+          <input type="text" id="type" name="type" class="form-control" [(ngModel)]="type">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">名称</label>
+        <div class="col-sm-10">
+          <input type="text" id="name" name="name" class="form-control" [(ngModel)]="name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="sign" class="col-sm-2 control-label">符号</label>
+        <div class="col-sm-10">
+          <input type="text" id="sign" name="sign" class="form-control" [(ngModel)]="sign">
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer text-right">
+    <button class="btn btn-default" type="button" (click)="modalRef.hide();">取消</button>
+    <button class="btn btn-primary" type="button" (click)="onUpdate();">保存</button>
+  </div>
+</ng-template>
+
+<ng-template #delTemplate>
+  <div class="modal-body text-danger">
+    <h3>
+      <strong>请注意，删除后将不可恢复！</strong>
+    </h3>
+    <form class="form-horizontal text-right">
+      <button class="btn btn-success" type="button" (click)="modalRef.hide();">取消</button>
+      <button class="btn btn-danger" type="button" (click)="onDelete();">删除</button>
+    </form>
+  </div>
+</ng-template>

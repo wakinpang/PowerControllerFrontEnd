@@ -1,0 +1,97 @@
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-brand toggle btn" (click)="toggleSidebar()">
+        <span>
+          <i class="fa fa-bars" aria-hidden="true"></i>
+        </span>
+      </button>
+      <a class="navbar-brand" href="javascript:void(0);" (click)="onNavigate();">能源监测智能化管理平台</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+      <!--<ul class="nav navbar-nav navbar-right">
+        <li><a href="javascript:void(0);" (click)="onLogout();">注销</a></li>
+        <li class="dropdown">
+          <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+             aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="javascript:void(0);">Action</a></li>
+            <li><a href="javascript:void(0);">Another action</a></li>
+            <li><a href="javascript:void(0);">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="javascript:void(0);">Separated link</a></li>
+          </ul>
+        </li>
+      </ul>-->
+      <form class="navbar-form navbar-right hidden-sm hidden-xs logout" role="form">
+        <button type="button" class="btn btn-success" (click)="onLogout();">注销</button>
+      </form>
+    </div>
+    <!-- /.navbar-collapse -->
+  <!-- /.container-fluid -->
+</nav>
+
+<mat-sidenav-container style="height: 100%">
+  <mat-sidenav [mode]="mode" [(opened)]="opened" fixedTopGap="92" style="background-color:#333333">
+    <div style="background-color:#333333; width: 250px; height:100%">
+      <!-- <ul class="nav nav-sidebar" style="padding-top:15px;">
+        <li [ngClass]="{'active': current === 0}" style="margin-left: 20px;">
+          <a href="javascript:void(0);" (click)="onNavigate('/admin/dashboard', 0)">Dashboard</a>
+        </li>
+      </ul> -->
+      <a href="javascript:void(0);" [ngClass]="{'active': current === 0}" (click)="onNavigate('/admin/dashboard', 0)" class="mat-sidenav-a">Dashboard</a>
+
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header class="mat-expansion-panel-header">
+          <mat-panel-title class="mat-panel-title">监控</mat-panel-title>
+        </mat-expansion-panel-header>
+        <ul class="nav nav-sidebar">
+          <li [ngClass]="{'active': current === 1}">
+            <a href="javascript:void(0);" (click)="onNavigate('/admin/real-time', 1)">实时监控</a>
+          </li>
+          <li [ngClass]="{'active': current === 101}">
+            <a href="javascript:void(0);" (click)="onNavigate('/admin/real-time/alarm', 101)">报警信息</a>
+          </li>
+        </ul>
+      </mat-expansion-panel>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header class="mat-expansion-panel-header">
+          <mat-panel-title class="mat-panel-title">管理</mat-panel-title>
+        </mat-expansion-panel-header>
+        <ul class="nav nav-sidebar">
+          <li [ngClass]="{'active': current === 2}">
+            <a href="javascript:void(0);" (click)="onNavigate('/admin/device', 2)">设备管理</a>
+          </li>
+          <li [ngClass]="{'active': current === 3}">
+            <a href="javascript:void(0);" (click)="onNavigate('/admin/plot', 3)">网络管理</a>
+          </li>
+          <li [ngClass]="{'active': current === 4}">
+            <a href="javascript:void(0);" (click)="onNavigate('/admin/data', 4)">数据管理</a>
+          </li>
+        </ul>
+      </mat-expansion-panel>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header class="mat-expansion-panel-header">
+          <mat-panel-title class="mat-panel-title">设置</mat-panel-title>
+        </mat-expansion-panel-header>
+        <ul class="nav nav-sidebar">
+          <li [ngClass]="{'active': current === 5}">
+            <a href="javascript:void(0);" (click)="onNavigate('/admin/setting', 5)">用户设置</a>
+          </li>
+          <li [ngClass]="{'active': current === 501}">
+            <a href="javascript:void(0);" (click)="onNavigate('/admin/setting/ratio', 501)">系数设置</a>
+          </li>
+          <li [ngClass]="{'active': current === 502}">
+            <a href="javascript:void(0);" (click)="onNavigate('/admin/setting/unit', 502)">单位管理</a>
+          </li>
+        </ul>
+      </mat-expansion-panel>
+      <button type="button" class="btn btn-success sidebar-btn hidden-md hidden-lg" (click)="onLogout();">注销</button>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content style="padding: 15px;">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

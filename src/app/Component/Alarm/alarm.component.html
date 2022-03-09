@@ -1,0 +1,84 @@
+<div class="alert alert-success alert-dismissible" role="alert" [hidden]="successMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onSuccessClick()"><span
+    aria-hidden="true">&times;</span></button>
+  <strong>成功!</strong>{{successMsg}}
+</div>
+
+<div class="alert alert-warning alert-dismissible" role="alert" [hidden]="warningMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onWarningClick()"><span
+    aria-hidden="true">&times;</span></button>
+  <strong>错误!</strong>{{warningMsg}}
+</div>
+
+<mat-card>
+  <form role="form" class="form-inline">
+    <div class="form-group">
+      <label for="device" class="control-label">设备</label>
+      <input type="text" class="form-control" id="device" placeholder="设备编号" name="device" [(ngModel)]="device">
+    </div>
+    <div class="form-group">
+      <label for="date" class="control-label">查询日期</label>
+      <input type="text" class="form-control" id="date" bsDaterangepicker placeholder="选择日期" name="date"
+             [(ngModel)]="dateRange">
+    </div>
+    <button type="button" class="btn btn-default" (click)="onSearch();">查询</button>
+  </form>
+</mat-card>
+<mat-card style="margin-top:15px;">
+  <div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>设备</th>
+          <th>报警时间</th>
+          <th>数值</th>
+          <th>工程单位</th>
+          <th>描述</th>
+          <th>模式</th>
+          <th>类型</th>
+          <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <label *ngIf="!pageList.length">没有数据</label>
+        <tr *ngFor="let data of page; let i = index;">
+          <td>{{(CurrentPage - 1) * PerPage + i + 1}}</td>
+          <td>{{data.sensor.name}}</td>
+          <td>{{data.createdAt}}</td>
+          <td>{{data.value}}</td>
+          <td>{{data.unit}}</td>
+          <td>{{data.desc}}</td>
+          <td>{{data.mode}}</td>
+          <td>{{data.type}}</td>
+          <td *ngIf="data.status === 0">
+            <a href="javascript:void(0);" class="text-success" (click)="onConfirm(data);">确认</a>
+            <a href="javascript:void(0);" class="text-muted" (click)="openModal(delTemplate, data);">删除</a>
+          </td>
+          <td *ngIf="data.status !== 0" class="text-muted">确认完成</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 text-center">
+      <pagination [totalItems]="TotalItems" [(ngModel)]="CurrentPage" [maxSize]="MaxSize" [itemsPerPage]="PerPage"
+                  class="pagination-sm"
+                  [boundaryLinks]="true" [rotate]="false" nextText="下一页" previousText="上一页" firstText="首页" lastText="尾页"
+                  (pageChanged)="onPageChanged($event);"></pagination>
+    </div>
+  </div>
+</mat-card>
+
+<ng-template #delTemplate>
+  <div class="modal-body text-danger">
+    <h3>
+      <strong>请注意，删除后将不可恢复！</strong>
+    </h3>
+    <form class="form-horizontal text-right">
+      <button class="btn btn-success" type="button" (click)="modalRef.hide();">取消</button>
+      <button class="btn btn-danger" type="button" (click)="onDelete();">删除</button>
+    </form>
+  </div>
+</ng-template>

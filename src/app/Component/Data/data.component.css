@@ -1,0 +1,13 @@
+.formula {
+    width:300px
+}
+
+@media screen and (max-width: 500px){
+    .btn-formula {
+        margin-top: 10px
+    }
+
+    .chart {
+        height: 200px
+    }
+}

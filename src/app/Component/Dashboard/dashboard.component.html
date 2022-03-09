@@ -1,0 +1,76 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10 col-sm-12 col-xs-12" style="margin-bottom: 15px;">
+      <mat-card>
+        <mat-card-title>
+          <form class="form-inline">
+            <div class="form-group">
+              <label for="chart">图表</label>
+              <select class="form-control" name="chart" id="chart" (change)="loadChart();" [(ngModel)]="chartType">
+                <option value="line">折线图</option>
+                <option value="bar">柱状图</option>
+                <option value="pie">饼图</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="unit">单位</label>
+              <select class="form-control" name="unit" id="unit" (change)="loadChart();" [(ngModel)]="unitType">
+                <option value="standard">标准煤</option>
+                <option value="CO2">CO2</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-inline">
+                <input type="checkbox" [(ngModel)]="types[0]" (change)="loadChart()"
+                       name="coal">煤
+              </label>
+              <label class="checkbox-inline">
+                <input type="checkbox" [(ngModel)]="types[1]" (change)="loadChart()"
+                       name="petrol">油
+              </label>
+              <label class="checkbox-inline">
+                <input type="checkbox" [(ngModel)]="types[2]" (change)="loadChart()"
+                       name="electric">电
+              </label>
+              <label class="checkbox-inline">
+                <input type="checkbox" [(ngModel)]="types[3]" (change)="loadChart()"
+                       name="steam">蒸汽
+              </label>
+              <label class="checkbox-inline">
+                <input type="checkbox" [(ngModel)]="types[4]" (change)="loadChart()"
+                       name="heat">热力
+              </label>
+              <label class="checkbox-inline">
+                <input type="checkbox" [(ngModel)]="types[5]" (change)="loadChart()"
+                       name="gas">天然气
+              </label>
+              <label class="checkbox-inline">
+                <input type="checkbox" [(ngModel)]="types[6]" (change)="loadChart()"
+                       name="water">自来水
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="time" class="control-label"></label>
+              <select class="form-control" name="time" id="time" [(ngModel)]="timeType" (change)="loadChart()">
+                <!--<option value="week">本周</option>-->
+                <option value="month">本月</option>
+              </select>
+            </div>
+          </form>
+        </mat-card-title>
+        <mat-card-content>
+          <div echarts [options]="CustomChart" [loading]="isLoading" theme="macarons" [merge]="updateOptions"></div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-md-2 col-sm-12 col-xs-12" style="margin-bottom: 15px;">
+      <mat-card (click)="navToAlarm()" class="normal"
+                [ngClass]="{'danger': alarmNumber !== 0}"
+                style="padding-left: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <h4>待确认问题</h4>
+        <h1>{{alarmNumber}}</h1>
+      </mat-card>
+    </div>
+  </div>
+</div>

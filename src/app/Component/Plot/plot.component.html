@@ -1,0 +1,152 @@
+<div class="plot-container">
+  <div class="toolbar">
+    <span class="btn-reset" (click)="relayoutClick()"></span>
+    <span class="btn-magnify" (click)="bigClick()"></span>
+    <span class="btn-shrink" (click)="narrowClick()"></span>
+  </div>
+
+  <div class="plot-content">
+    <div class="diagramOverview">
+      <div id="myPaletteDiv" class="module"></div>
+      <div class="dropzone" id="myDiagramDiv">
+      </div>
+    </div>
+    <div class="rightSetting hidden-xs">
+      <form class="form-horizontal" role="form">
+      </form>
+    </div>
+  </div>
+</div>
+
+<div>
+  <!--<textarea id="data" style="width: 96%;height: 100px;" [ngModel]="json"></textarea>-->
+
+  <div class="rightSetting visible-xs" style="margin-bottom: 15px; margin-right: 10px;">
+    <form class="form-horizontal" role="form">
+    </form>
+  </div>
+  <div>
+    <button style="text-align: center;" class="btn btn-default btn-sm" (click)="loadClick()">Load</button>
+    <button style="text-align: center;" class="btn btn-default btn-sm" (click)="saveClick()">Save</button>
+    <button style="text-align: center;" class="btn btn-default btn-sm" (click)="loopClick()">运行</button>
+    <button style="text-align: center;" class="btn btn-default btn-sm" (click)="stopClick()">停止</button>
+  </div>
+</div>
+
+<div id="contextMenu" class="menu-list hide" style="display: none;">
+  <ul>
+    <li onclick="flowchart.command(this.textContent)" id="save">
+      <a href="javascript:;" class="disabled">保存节点</a>
+    </li>
+    <li onclick="flowchart.command(this.textContent)" id="view">
+      <a href="#" class="disabled" target="_self">查看属性</a>
+    </li>
+    <li onclick="flowchart.command(this.textContent)" id="codeView">
+      <a href="javascript:;" class="disabled">查看节点代码</a>
+    </li>
+    <li onclick="flowchart.command(this.textContent)" id="delete">
+      <a href="javascript:;" class="disabled">删除节点</a>
+    </li>
+    <li onclick="flowchart.command(this.textContent)" id="deleteLink" style="display: none">
+      <a href="javascript:;" class="disabled">删除依赖关系</a>
+    </li>
+  </ul>
+</div>
+
+<mat-card style="margin-top: 40px">
+  <mat-card-header>
+    <h4 class="text-info">符号:+ 相加 - 相减 * 乘以 / 除以 例:a*b+c-d/f</h4>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="container-fluid">
+      <form role="form" class="form-inline">
+        <div class="form-group">
+          <label for="formula" class="sr-only"></label>
+          <input type="text" [(ngModel)]="formula" class="form-control col-md-6" placeholder="公式" id="formula"
+                 name="formula">
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-success" (click)="loadChart();">运行公式</button>
+        </div>
+        <div class="form-group">
+          <strong *ngIf="formulaErrorMsg != ''" style="color: red">{{formulaErrorMsg}}</strong>
+        </div>
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card style="margin-top:15px;">
+  <div class="container-fluid">
+    <form class="form-inline" role="form">
+      <div class="form-group">
+        <label for="chart">图表</label>
+        <select name="chart" id="chart" [(ngModel)]="chartType" class="form-control">
+          <option value="line">折线图</option>
+          <option value="bar">柱状图</option>
+          <option value="pie">饼图</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="unit">单位</label>
+        <select name="unit" id="unit" (change)="unitChanged();" class="form-control" [(ngModel)]="unitType">
+          <option value="标准煤">标准煤</option>
+          <option value="CO2">CO2</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="val">时间跨度</label>
+        <input type="number" [(ngModel)]="timeVal" name="val" id="val" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="range" class="sr-only"></label>
+        <select [(ngModel)]="timeType" name="range" id="range" class="form-control">
+          <option value="日">日</option>
+          <option value="月">月</option>
+          <option value="年">年</option>
+          <option value="时">时</option>
+          <option value="分">分</option>
+        </select>
+      </div>
+      <div>
+        <div class="checkbox-inline">
+          <label>
+            <input type="checkbox" [(ngModel)]="types[0]" [disabled]="disabled[0]" name="coal">煤
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label>
+            <input type="checkbox" [(ngModel)]="types[1]" [disabled]="disabled[1]" name="oil">油
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label>
+            <input type="checkbox" [(ngModel)]="types[2]" [disabled]="disabled[2]" name="electric">电
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label>
+            <input type="checkbox" [(ngModel)]="types[3]" [disabled]="disabled[3]" name="steam">蒸汽
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label>
+            <input type="checkbox" [(ngModel)]="types[4]" [disabled]="disabled[4]" name="heat">热力
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label>
+            <input type="checkbox" [(ngModel)]="types[5]" [disabled]="disabled[5]" name="gas">天然气
+          </label>
+        </div>
+        <div class="checkbox-inline">
+          <label>
+            <input type="checkbox" [(ngModel)]="types[6]" [disabled]="disabled[6]" name="water">自来水
+          </label>
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="loadChart();">运行</button>
+    </form>
+    <div echarts [options]="CustomChart" class="chart"></div>
+  </div>
+</mat-card>

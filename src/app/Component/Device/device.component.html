@@ -1,0 +1,139 @@
+<div class="alert alert-success alert-dismissible" role="alert" [hidden]="successMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onSuccessClick()"><span
+    aria-hidden="true">&times;</span></button>
+  <strong>成功!</strong> {{successMsg}}
+</div>
+
+<div class="alert alert-warning alert-dismissible" role="alert" [hidden]="warningMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onWarningClick()"><span
+    aria-hidden="true">&times;</span></button>
+  <strong>错误!</strong> {{warningMsg}}
+</div>
+
+<mat-card>
+  <form class="form-inline">
+    <div class="form-group">
+      <label for="device" class="control-label">设备</label>
+      <input type="text" class="form-control" id="device" placeholder="设备编号" name="device" [(ngModel)]="device">
+    </div>
+    <button type="button" class="btn btn-default" (click)="onSearch();">查询</button>
+    <button type="button" class="btn btn-success" (click)="onNew(newTemplate);">增加</button>
+  </form>
+</mat-card>
+<mat-card style="margin-top:15px;">
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th class="col-md-1">#</th>
+        <th class="col-md-1">编号</th>
+        <th class="col-md-2">名称</th>
+        <th class="col-md-2">描述</th>
+        <th class="col-md-2">类型</th>
+        <th class="col-md-2">位置</th>
+        <th class="col-md-2">操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of page; let i = index;">
+        <td>{{(CurrentPage - 1) * PerPage + i + 1}}</td>
+        <ng-container *ngIf="!editData || editData.id !== data.id">
+          <td>{{data.sid}}</td>
+          <td>{{data.name}}</td>
+          <td>{{data.desc}}</td>
+          <td>{{data.type}}</td>
+          <td>{{data.location}}</td>
+          <td>
+            <a href="javascript:void(0);" class="text-primary" (click)="onItemEdit(data)">修改</a>
+            <a href="javascript:void(0);" class="text-danger" (click)="openModal(delTemplate, data);">删除</a>
+          </td>
+        </ng-container>
+        <ng-container *ngIf="editData && editData.id === data.id">
+          <td>
+            <input type="text" name="sid" [(ngModel)]="editData.sid">
+          </td>
+          <td>
+            <input type="text" name="name" [(ngModel)]="editData.name">
+          </td>
+          <td>
+            <input type="text" name="desc" [(ngModel)]="editData.desc">
+          </td>
+          <td>
+            <input type="text" name="type" [(ngModel)]="editData.type">
+          </td>
+          <td>
+            <input type="text" name="location" [(ngModel)]="editData.location">
+          </td>
+          <td>
+            <button type="button" class="btn btn-success" (click)="onItemConfirm(data)">确定</button>
+            <button type="button" class="btn btn-default" (click)="onItemCancel()">取消</button>
+          </td>
+        </ng-container>
+      </tr>
+      </tbody>
+    </table>
+    <label *ngIf="pageList.length === 0">没有数据</label>
+  </div>
+  <div class="col-xs-12 col-sm-12 text-center">
+    <pagination [totalItems]="TotalItems" [(ngModel)]="CurrentPage" [maxSize]="MaxSize" [itemsPerPage]="PerPage"
+                class="pagination-sm"
+                [boundaryLinks]="true" [rotate]="false" nextText="下一页" previousText="上一页" firstText="首页" lastText="尾页"
+                (pageChanged)="onPageChanged($event)"></pagination>
+  </div>
+</mat-card>
+
+<ng-template #delTemplate>
+  <div class="modal-body text-danger">
+    <h3>
+      <strong>请注意，删除后将不可恢复！</strong>
+    </h3>
+    <form class="form-horizontal text-right">
+      <button class="btn btn-success" type="button" (click)="modalRef.hide();">取消</button>
+      <button class="btn btn-danger" type="button" (click)="onDelete();">删除</button>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #newTemplate>
+  <div class="modal-header">
+    <h4>新增设备</h4>
+  </div>
+  <div class="modal-body">
+    <form role="form" class="form-horizontal">
+      <div class="form-group">
+        <label for="sid" class="col-sm-2 control-label">序列号</label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control" id="sid" name="sid" [(ngModel)]="newDevice.sid">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">名称</label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control" id="name" name="name" [(ngModel)]="newDevice.name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="desc" class="col-sm-2 control-label">描述</label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control" id="desc" name="desc" [(ngModel)]="newDevice.desc">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="type" class="col-sm-2 control-label">类型</label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control" id="type" name="type" [(ngModel)]="newDevice.type">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="location" class="col-sm-2 control-label">位置</label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control" id="location" name="location" [(ngModel)]="newDevice.location">
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer text-right">
+    <button class="btn btn-primary" type="button" (click)="onSave();">保存</button>
+    <button class="btn btn-default" type="button" (click)="modalRef.hide();">取消</button>
+  </div>
+</ng-template>

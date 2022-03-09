@@ -1,0 +1,134 @@
+<div class="alert alert-success alert-dismissible" role="alert" [hidden]="successMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onSuccessClick()"><span
+    aria-hidden="true">&times;</span></button>
+  <strong>成功!</strong> {{successMsg}}
+</div>
+
+<div class="alert alert-warning alert-dismissible" role="alert" [hidden]="warningMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onWarningClick()"><span
+    aria-hidden="true">&times;</span></button>
+  <strong>错误!</strong> {{warningMsg}}
+</div>
+
+<mat-card>
+  <form>
+    <button type="button" class="btn btn-success" (click)="onNew(modTemplate)">增加</button>
+  </form>
+</mat-card>
+<mat-card style="margin-top:15px;">
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <caption>
+        <h4 class="text-info">单位 A : 单位 B = 1 : 系数 X</h4>
+      </caption>
+      <thead>
+      <tr>
+        <th class="col-md-1">#</th>
+        <th class="col-md-3">
+          <select (change)="searchUnit();" [(ngModel)]="unitA" class="select">
+            <option value=-1>所有单位</option>
+            <option *ngFor="let unit of unitList" [ngValue]="unit.id">{{unit.name}}</option>
+          </select>
+        </th>
+        <th class="col-md-3">
+          <select (change)="searchUnit();" [(ngModel)]="unitB" class="select">
+            <option value=-1>所有单位</option>
+            <option *ngFor="let unit of unitList" [ngValue]="unit.id">{{unit.name}}</option>
+          </select>
+        </th>
+        <th class="col-md-3">数值 X</th>
+        <th class="col-md-2">操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of page; let i = index;">
+        <td>{{(CurrentPage - 1) * PerPage + i + 1}}</td>
+        <ng-container *ngIf="!oldItem || oldItem !== data">
+          <td>{{data.from.name}}</td>
+          <td>{{data.to.name}}</td>
+          <td>{{data.value}}</td>
+          <td>
+            <a href="javascript:void(0);" class="text-primary" (click)="onItemEdit(data)">修改</a>
+            <a href="javascript:void(0);" class="text-danger" (click)="openModal(delTemplate, data);">删除</a>
+          </td>
+        </ng-container>
+        <ng-container *ngIf="oldItem && oldItem === data">
+          <td>
+            <select [(ngModel)]="from">
+              <option *ngFor="let unit of unitList" [ngValue]="unit.id">{{unit.name}}</option>
+            </select>
+          </td>
+          <td>
+            <select [(ngModel)]="to">
+              <option *ngFor="let unit of unitList" [ngValue]="unit.id">{{unit.name}}</option>
+            </select>
+          </td>
+          <td><input type="number" [(ngModel)]="value"></td>
+          <td>
+            <button type="button" class="btn btn-success" (click)="onItemConfirm(data);">确定</button>
+            <button type="button" class="btn btn-default" (click)="onItemCancel()">取消</button>
+          </td>
+        </ng-container>
+      </tr>
+      </tbody>
+    </table>
+    <label *ngIf="list.length === 0">没有数据</label>
+  </div>
+  <div class="col-xs-12 col-sm-12 text-center">
+    <pagination [totalItems]="TotalItems" [(ngModel)]="CurrentPage" [maxSize]="MaxSize" [itemsPerPage]="PerPage"
+                class="pagination-sm"
+                [boundaryLinks]="true" [rotate]="false" nextText="下一页" previousText="上一页" firstText="首页" lastText="尾页"
+                (pageChanged)="onPageChanged($event)"></pagination>
+  </div>
+</mat-card>
+
+<ng-template #modTemplate>
+  <div class="modal-header">
+    <h4>新增系数</h4>
+  </div>
+  <div class="modal-body">
+    <p class="text-info">单位 A : 单位 B = 1 : 系数 X</p>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>单位A</th>
+        <th>单位B</th>
+        <th>系数X</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <select [(ngModel)]="nowData.from">
+            <option *ngFor="let unit of unitList" [ngValue]="unit">{{unit.name}}</option>
+          </select>
+        </td>
+        <td>
+          <select [(ngModel)]="nowData.to">
+            <option *ngFor="let unit of unitList" [ngValue]="unit">{{unit.name}}</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" [(ngModel)]="nowData.value">
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer text-right">
+    <button class="btn btn-default" type="button" (click)="modalRef.hide();">取消</button>
+    <button class="btn btn-primary" type="button" (click)="onUpdate();">保存</button>
+  </div>
+</ng-template>
+
+<ng-template #delTemplate>
+  <div class="modal-body text-danger">
+    <h3>
+      <strong>请注意，删除后将不可恢复！</strong>
+    </h3>
+    <form class="form-horizontal text-right">
+      <button class="btn btn-danger" type="button" (click)="onDelete();">删除</button>
+      <button class="btn btn-success" type="button" (click)="modalRef.hide();">取消</button>
+    </form>
+  </div>
+</ng-template>

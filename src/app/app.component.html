@@ -1,0 +1,46 @@
+<!--
+<div class="container-fluid" style="padding-left: 0; padding-right: 0; background-color:rgb(87, 96, 105); box-shadow: 0 2px 5px 0 rgba(0,0,0,.3)">
+  <header class="navbar navbar-light navbar-expand-lg navbar-fixed-top">
+    <a class="navbar-brand" style="color: white" href="#/">能源控制系统</a>
+    <div class="navbar-collapse collapse show" id="navbarContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item" *ngFor="let item of navbarItems">
+          <a class="nav-link" href="{{item.Link}}">{{item.Name}}</a>
+        </li>
+      </ul>
+      <div class="row" *ngIf="!loginService.loginState.success" style="padding-right: 10px">
+        <a href="/register/r">注册</a>
+        <span class="badge">   </span>
+      </div>
+      <div class="row" *ngIf="loginService.loginState.success" style="padding-right: 5px; color: white;">
+        你好，{{loginService.userInfo.phone}}，<a href="#" (click)="logoutClick()">注销</a>
+        &lt;!&ndash;button type="button" class="btn btn-default" style="color:rgba(0, 0, 255, 0.76)" (click)="logoutClick()">注销</button&ndash;&gt;
+      </div>
+    </div>
+  </header>
+</div>
+<ng-sidebar-container style="height: 100vh; background-color:white">
+    <ng-sidebar>
+    </ng-sidebar>
+    <div ng-sidebar-content style="height: 100%;">
+            <div class="row" style="height: 100%; padding-left: 10px">
+                <div *ngIf="loginService.loginState.success" style="width: 6%; box-shadow: 0 2px 5px 0 rgba(0,0,0,.3)">
+                    <ul class="tab-bar" style="background-color:rgb(173, 195, 192);">
+                        <li (click)="onSelect('/charts')">
+                          <i class="fa fa-area-chart fa-lg" aria-hidden="true"></i>
+                        </li>
+                        <li (click)="onSelect('/plot')">
+                          <i class="fa fa-pencil fa-lg" aria-hidden="true"></i>
+                        </li>
+                        <li (click)="onSelect('/search')">
+                          <i class="fa fa-search fa-lg" aria-hidden="true"></i>
+                        </li>
+                    </ul>
+                </div>
+                <div style="width: 94%;">
+                  <router-outlet></router-outlet>
+                </div>
+            </div>
+    </div>
+</ng-sidebar-container>-->
+<router-outlet></router-outlet>

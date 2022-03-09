@@ -1,0 +1,52 @@
+<mat-card class="header">
+  <img src="../../../assets/avatar.png" class="avatar"/>
+  <h4>{{userInfo.phone?userInfo.phone:"管理员"}}</h4>
+</mat-card>
+
+<mat-card style="margin-top: 15px; margin-bottom: 15px;">
+  <div class="container-fluid">
+    <div class="row flex-row">
+      <div class="col-md-2 col-sm-4">密码</div>
+      <div class="col-md-8 col-sm-4 text-right">
+        <div *ngIf="!isEditing">******</div>
+        <ng-container *ngIf="isEditing">
+          <form class="form-inline">
+            <div class="form-group">
+              <label for="newPwd" class="control-label">新密码</label>
+              <input type="password" id="newPwd" name="newPwd" minlength="6" class="form-control" [(ngModel)]="newPwd">
+            </div>
+            <div class="form-group">
+              <label for="conPwd" class="control-label">确认密码</label>
+              <input type="password" id="conPwd" name="conPwd" minlength="6" class="form-control" [(ngModel)]="conPwd">
+            </div>
+          </form>
+        </ng-container>
+      </div>
+      <div class="col-md-2 col-sm-4">
+        <button class="btn btn-primary" *ngIf="!isEditing" (click)="toggleEdit()">修改</button>
+        <ng-container *ngIf="isEditing">
+          <button class="btn btn-success" (click)="onChangePwd()" [disabled]="isUpdating">确认</button>
+          <button class="btn btn-default" (click)="toggleEdit()">取消</button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</mat-card>
+
+<div class="alert alert-success alert-dismissible" role="alert" [hidden]="succMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onSuccessClick()"><span
+    aria-hidden="true">&times;</span></button>
+  <strong>成功!</strong> {{succMsg}}
+</div>
+
+<div class="alert alert-danger alert-dismissible" role="alert" [hidden]="errorMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onErrorClick()"><span
+    aria-hidden="true">&times;</span></button>
+  <strong>错误!</strong> {{errorMsg}}
+</div>
+
+<div class="alert alert-warning alert-dismissible" role="alert" [hidden]="warnMsg === ''">
+  <button type="button" class="close" aria-label="Close" (click)="onWarnClick()"><span
+    aria-hidden="true">&times;</span></button>
+  {{warnMsg}}
+</div>
